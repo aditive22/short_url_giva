@@ -1,6 +1,6 @@
 const { nanoid } = require("nanoid");
 const validUrl = require("valid-url");
-const URL = require("../models/url");
+const URLModel = require("../models/url"); // Rename model to URLModel
 
 async function generateNewShortUrl(req, res) {
   const { url, expirationDate } = req.body;
@@ -8,9 +8,9 @@ async function generateNewShortUrl(req, res) {
     return res.status(400).json({ message: "URL is required" });
   }
 
-  // Validate URL using the URL constructor for stricter validation
+  // Validate URL using the built-in URL constructor for stricter validation
   try {
-    new URL(url);
+    new global.URL(url);  // Use global.URL to refer to the built-in URL constructor
   } catch (error) {
     return res.status(400).json({ message: "Invalid URL provided" });
   }
@@ -20,13 +20,13 @@ async function generateNewShortUrl(req, res) {
 
   try {
     if (alias) {
-      // If alias is provided, ensure it is not already in use
-      const existingAlias = await URL.findOne({ shortId: alias });
+      // Ensure the alias is not already in use
+      const existingAlias = await URLModel.findOne({ shortId: alias });
       if (existingAlias) {
         return res.status(409).json({ message: "Alias already in use" });
       }
       // Create the record with the custom alias
-      const newUrl = new URL({
+      const newUrl = new URLModel({
         shortId: alias,
         redirectUrl: url,
         clicked: 0,
@@ -37,7 +37,7 @@ async function generateNewShortUrl(req, res) {
     } else {
       // Generate a unique short ID using nanoid
       const shortID = nanoid(8);
-      const newUrl = new URL({
+      const newUrl = new URLModel({
         shortId: shortID,
         redirectUrl: url,
         clicked: 0,
@@ -55,4 +55,3 @@ async function generateNewShortUrl(req, res) {
 module.exports = {
   generateNewShortUrl,
 };
-
