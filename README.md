@@ -88,7 +88,35 @@ This project implements a URL shortener that exposes two main API endpoints:
    "shortId": "generatedShortID" // or "mycustomname" if custom alias was used
    }
    ```
-2. **Redirect to Original URL**
+   Using Postman:
+   - Method: POST
+   - URL: http://localhost:8001/shorten
+   - Headers:
+     - Content-Type: application/json
+   - Body (raw JSON):
+    ```json
+    {
+    "url": "https://chatgpt.com",
+    "expirationDate": "2025-03-23T18:03:00Z"
+    }
+    ```
+  With Custom Alias:
+  - URL: http://localhost:8001/shorten?alias=mycustomname
+  - Body (raw JSON):
+    ```json
+    {
+    "url": "https://chatgpt.com"
+    }
+  Expected Response:
+  ```json
+{
+  "shortId": "generatedShortID"  // or "mycustomname" if a custom alias is used
+}
+```
+
+
+
+3. **Redirect to Original URL**
    Once a short URL is generated (e.g., `generatedShortID`), visiting:
    ```bash
    http://localhost:8001/generatedShortID
@@ -102,6 +130,20 @@ This project implements a URL shortener that exposes two main API endpoints:
      ```json
      { "message": "Short URL not found" }
      ```
+  Using Postman:
+  - Method: GET
+  - URL: http://localhost:8001/generatedShortID
+  When you send a GET request to the generated short URL, you should be redirected to https://chatgpt.com. In Postman, you'll see the response indicating a redirection, or you can check the URL in the Postman console.
+  Error Cases:
+  - Expired URL:If the URL is expired, you'll receive:
+    ```json
+    { "message": "Link expired" }
+    ```
+  Non-existent Short URL:If the short URL does not exist, you'll get:
+  ```json
+  { "message": "Short URL not found" }
+  ```
+
 
 ## Testing with Postman
 1. **Create a New Request for Shortening a URL:**
