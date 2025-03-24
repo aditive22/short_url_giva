@@ -33,9 +33,6 @@ This project implements a URL shortener that exposes two main API endpoints:
 - **Cache:** Redis (for caching URL data)
 - **Optional:** Nginx (for load balancing multiple backend instances)
 
-## Project Structure
-
-
 ## Running the Project Locally
 
 ### Prerequisites
@@ -57,7 +54,7 @@ This project implements a URL shortener that exposes two main API endpoints:
    npm install
    ```
 3. **Configure Environment Variables**
-   Create a .env file in the project root (if you prefer using env variables) and add necessary variables, for example:
+   Create a `.env` file in the project root (if you prefer using env variables) and add necessary variables, for example:
    ```env
    PORT=8001
    MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.ozzk9.mongodb.net/short_urls?retryWrites=true&w=majority
@@ -92,11 +89,11 @@ This project implements a URL shortener that exposes two main API endpoints:
    }
    ```
 2. **Redirect to Original URL**
-   Once a short URL is generated (e.g., generatedShortID), visiting:
+   Once a short URL is generated (e.g., `generatedShortID`), visiting:
    ```bash
    http://localhost:8001/generatedShortID
    ```
-   will redirect you to https://chatgpt.com.
+   will redirect you to `https://chatgpt.com`.
    - If the URL is expired, you'll receive a JSON response with a 410 status:
      ```json
      { "message": "Link expired" }
@@ -105,5 +102,22 @@ This project implements a URL shortener that exposes two main API endpoints:
      ```json
      { "message": "Short URL not found" }
      ```
+
+## Testing with Postman
+1. **Create a New Request for Shortening a URL:**
+   - Open Postman.
+   - Create a new request, set the method to POST.
+   - Enter the URL: `http://localhost:8001/shorten`
+   - In the "Body" tab, select "raw" and "JSON", then enter the JSON payload.
+   - Click "Send" to create the short URL.
+2. **Create a New Request for Redirection:**
+   - Copy the `shortId` returned from the previous request.
+   - Create a new request in Postman, set the method to GET.
+   - Enter the URL: `http://localhost:8001/<shortId>` (replace `<shortId>` with the actual value).
+   - Click "Send" to follow the redirection.
+   *Note:* Postman may not automatically follow redirections depending on settings, so you might need to check the "Follow Redirects" option in Postman's settings.
+3. **Check Logs for Debugging:**
+   - Use the Postman console (`View > Show Postman Console`) to see logs and additional details about the requests and responses.
+     
 ## Conclusion
 This project demonstrates a robust approach to building a URL shortener service that handles custom aliases, expiration, and click tracking, leveraging both MongoDB for persistence and Redis for performance. Feel free to contribute, open issues, or suggest enhancements.
