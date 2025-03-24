@@ -1,0 +1,20 @@
+{
+  "name": "short_url_giva",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.12.2",
+    "nanoid": "^5.1.5",
+    "nodemon": "^3.1.9",
+    "valid-url": "^1.0.9"
+  }
+}
