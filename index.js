@@ -1,12 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose");
-//const validUrl = require("valid-url"); // For URL validation
-const { createClient } = require("redis"); // Redis client
+import express from "express";
+import mongoose from "mongoose";
+// import validUrl from "valid-url"; // For URL validation (currently commented out)
+import { createClient } from "redis";
 
-const urlRoutes = require("./routes/url");
-const URL = require("./models/url");
+import urlRoutes from "./routes/url.js";
+import URLModel from "./models/url.js";
+
 const app = express();
-const port = 8001;
+const port = process.env.PORT || 8001;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -21,7 +22,7 @@ const redisClient = createClient({
   url: process.env.REDIS_URL || 'redis://:FBeUICycUaVlWxsFQIWqDHcLrvspHiXp@hopper.proxy.rlwy.net:39869'
 });
 redisClient.on("error", (err) => console.error("Redis Client Error", err));
-redisClient.connect()
+await redisClient.connect()
   .then(async () => {
     console.log("Connected to Redis");
     const pingResponse = await redisClient.ping();
@@ -44,7 +45,7 @@ app.get('/:shortId', async (req, res) => {
       // Redirect immediately
       res.redirect(redirectUrl);
       // Increment the click count in MongoDB atomically
-      await URL.findOneAndUpdate({ shortId }, { $inc: { clicked: 1 } });
+      await URLModel.findOneAndUpdate({ shortId }, { $inc: { clicked: 1 } });
       // Update cache with incremented click count
       const updatedClicked = clicked + 1;
       await redisClient.setEx(shortId, 3600, JSON.stringify({ redirectUrl, clicked: updatedClicked }));
@@ -52,7 +53,7 @@ app.get('/:shortId', async (req, res) => {
     }
     
     // If not cached, query MongoDB for the URL entry
-    const entry = await URL.findOne({ shortId });
+    const entry = await URLModel.findOne({ shortId });
     if (!entry) {
       return res.status(404).json({ message: "Short URL not found" });
     }
@@ -62,7 +63,7 @@ app.get('/:shortId', async (req, res) => {
       return res.status(410).json({ message: "Link expired" });
     }
     
-    // Validate the redirect URL using validUrl
+    // Validate the redirect URL using validUrl (currently commented out)
     // if (!validUrl.isUri(entry.redirectUrl)) {
     //   return res.status(400).json({ message: "Invalid URL found for redirection" });
     // }

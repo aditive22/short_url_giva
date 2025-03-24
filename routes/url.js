@@ -1,5 +1,5 @@
-const express=require("express");
-const {generateNewShortUrl}=require("../controllers/url");
+import express from "express";
+import { generateNewShortUrl } from "../controllers/url.js";
 const router = express.Router();
-router.post('/',generateNewShortUrl);
-module.exports=router;
+router.post('/', generateNewShortUrl);
+export default router;

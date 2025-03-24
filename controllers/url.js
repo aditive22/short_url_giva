@@ -1,8 +1,8 @@
-const { nanoid } = require("nanoid");
-const validUrl = require("valid-url");
-const URLModel = require("../models/url"); // Rename model to URLModel
+import { nanoid } from "nanoid";
+import validUrl from "valid-url";
+import URLModel from "../models/url.js"; // Make sure the file extension is included
 
-async function generateNewShortUrl(req, res) {
+export async function generateNewShortUrl(req, res) {
   const { url, expirationDate } = req.body;
   if (!url) {
     return res.status(400).json({ message: "URL is required" });
@@ -10,7 +10,7 @@ async function generateNewShortUrl(req, res) {
 
   // Validate URL using the built-in URL constructor for stricter validation
   try {
-    new global.URL(url);  // Use global.URL to refer to the built-in URL constructor
+    new global.URL(url); // Use global.URL to refer to the built-in URL constructor
   } catch (error) {
     return res.status(400).json({ message: "Invalid URL provided" });
   }
@@ -30,7 +30,7 @@ async function generateNewShortUrl(req, res) {
         shortId: alias,
         redirectUrl: url,
         clicked: 0,
-        expirationDate: expirationDate ? new Date(expirationDate) : null
+        expirationDate: expirationDate ? new Date(expirationDate) : null,
       });
       await newUrl.save();
       return res.status(200).json({ shortId: alias });
@@ -41,7 +41,7 @@ async function generateNewShortUrl(req, res) {
         shortId: shortID,
         redirectUrl: url,
         clicked: 0,
-        expirationDate: expirationDate ? new Date(expirationDate) : null
+        expirationDate: expirationDate ? new Date(expirationDate) : null,
       });
       await newUrl.save();
       return res.status(200).json({ shortId: shortID });
@@ -51,7 +51,3 @@ async function generateNewShortUrl(req, res) {
     return res.status(500).json({ message: "Server error" });
   }
 }
-
-module.exports = {
-  generateNewShortUrl,
-};
